@@ -12,6 +12,11 @@
 
   Assets are all referenced by path inside this repo (never an external image
   host) so GitHub's camo proxy can't drop them.
+
+  One deliberate exception: the contribution snake in 账房. It is regenerated
+  every 12h by .github/workflows/snake.yml and can only be published to the
+  `output` branch (an Action cannot write back to main), so it is referenced
+  via a raw.githubusercontent.com URL.
   ============================================================================
 -->
 
@@ -97,6 +102,18 @@
 > 屋主不在的时候，账房替他记账。
 
 <div align="center">
+
+<!-- 账本上的蛇。由 .github/workflows/snake.yml 每 12 小时重画一次，
+     SVG 落在 output 分支 —— 这里也是全页唯一引用 raw 地址的图。 -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/yan666-star/yan666-star/output/snake-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/yan666-star/yan666-star/output/snake.svg">
+  <img src="https://raw.githubusercontent.com/yan666-star/yan666-star/output/snake.svg" width="100%" alt="贪吃蛇正在按顺序吃掉这一年的贡献格子">
+</picture>
+
+<sub>账本上爬着一条蛇 —— 每 12 小时重爬一遍，把这一年的格子挨个吃掉</sub>
+
+<br>
 
 <!-- 第三方卡片不吃 prefers-color-scheme，所以和 Hero 一样给两套 URL 让它跟着系统主题走 -->
 <picture>

@@ -1,0 +1,53 @@
+name: 账房 · 贪吃蛇
+
+# 把贡献日志（contribution graph）渲染成一条会吃掉格子的蛇。
+# 生成的 SVG 推到 output 分支，README 里用 raw 地址 + <picture> 引用。
+#
+# 配色沿用书房设计系统（见 README 顶部注释）：
+#   日间  蛇 #d2603a(accent)  格子 由浅到深走书架木色 #ece4d5→#6f5233
+#   夜间  蛇 #e07a52(accent)  格子 由暗到亮走木色 #1e2127→#a9804f
+# 这样蛇是画面里唯一的强调色，格子退成"被吃掉的账本"。
+
+on:
+  # 每 12 小时重画一次
+  schedule:
+    - cron: "0 */12 * * *"
+
+  # 允许在 Actions 页手动触发
+  workflow_dispatch:
+
+  # main 分支有推送（比如改了 README）就顺手重画
+  push:
+    branches:
+      - main
+
+# 需要写权限才能把产物推到 output 分支
+permissions:
+  contents: write
+
+jobs:
+  snake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 把贡献格子画成贪吃蛇
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          # 每行一个产物，问号后可带参数；
+          # color_dots 必须是 5 个色值：第 1 个是「0 贡献」，其余由低到高。
+          # 注意 `#` 前不能有空格，否则 YAML 会把它当注释。
+          outputs: |
+            dist/snake.svg?color_snake=#d2603a&color_dots=#ece4d5,#e2c69d,#c9a778,#a9804f,#6f5233
+            dist/snake-dark.svg?color_snake=#e07a52&color_dots=#1e2127,#3d3529,#5c4a33,#7d6440,#a9804f
+
+      - name: 推到 output 分支
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: output
+          build_dir: dist
+          # 每次强制推送，output 分支始终只有一个提交，不会越滚越大
+          keep_history: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
